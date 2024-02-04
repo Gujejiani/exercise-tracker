@@ -3,7 +3,44 @@
 // req:
 
 const os = require('os');
+const io = require('socket.io-client');
+const options = {
+    auth: {
+        token: '23wdxsaxsa23wadsdssa'
+    }
+}
+const socket = io('http://127.0.0.1:3000', options) // 3000 is where our server is listening
 
+socket.on('connect', () => {
+    console.log('we connected to the server')
+
+    // we need a way to identify this machine to the server, for front-end usage
+
+    // we could user, socket.id, randomHash? ipAddress? 
+
+    // what about macA? 
+    const nI = os.networkInterfaces(); // a list of all network interfaces on this machine 
+    let macA; // get mac address
+    // loop through all the nI for this machine and find a non-internal one
+    for (let key in nI) {
+        if (!nI[key][0].internal) {
+            macA = nI[key][0].mac;
+            break;
+        }
+    }
+    console.log(macA, 'macA')
+    const perfDataInterval = setInterval(async ()=>{
+        const perfData =  await  performanceLoadData();
+        perfData.macA = macA;
+        socket.emit('perfData', perfData)
+    }, 1000)
+
+
+    socket.on('disconnect', () => {
+        clearInterval(perfDataInterval) // if we disconnect, stop sending data
+        // console.log('disconnected from server')
+    })
+});
 
 const  getCPULoad =()=>{
 
