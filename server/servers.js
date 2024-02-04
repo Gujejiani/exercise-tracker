@@ -14,7 +14,7 @@ if (cluster.isMaster) {
   setupMaster(httpServer, {
     loadBalancingMethod: "least-connection",
   });
-
+  
   // setup connections between the workers
   setupPrimary();
 
@@ -28,7 +28,7 @@ if (cluster.isMaster) {
   //   serialization: "advanced",
   // });
 
-  httpServer.listen(3001);
+  httpServer.listen(3000);
 
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
@@ -42,7 +42,11 @@ if (cluster.isMaster) {
   console.log(`Worker ${process.pid} started`);
 
   const httpServer = http.createServer();
-  const io = new Server(httpServer);
+  const io = new Server(httpServer, {
+    cors: {
+      origin: "http://localhost:3001",
+    }
+  });
 
   // use the cluster adapter
   io.adapter(createAdapter());
@@ -52,7 +56,7 @@ if (cluster.isMaster) {
 
   io.on("connection", (socket) => {
     console.log(`Worker ${process.pid} socket ${socket.id} connected`)
-    io.emit("welcome", "world");
+    io.emit("welcome", "to socket io server");
     /* ... */
   });
 }
