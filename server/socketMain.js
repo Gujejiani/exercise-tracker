@@ -11,8 +11,9 @@ const socketMain = (io)=>{
             // valid react client 
             socket.join('reactClient') // this client is a reactClient
         }else {
-            socket.disconnect(true)
             console.log('You have been disconected')
+            socket.disconnect(true)
+            
         }
         console.log('token ', auth.token)
         console.log(`Worker ${process.pid} socket ${socket.id} connected`)
@@ -20,6 +21,8 @@ const socketMain = (io)=>{
         socket.on("perfData", (data) => {   
             console.log('Tick...')
             console.log(data)
+
+            io.to('reactClient').emit('perfData', data)
 
 
         })
