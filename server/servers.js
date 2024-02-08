@@ -56,6 +56,6 @@ if (cluster.isMaster) {
 
   // socketMain is our file where our emits and listens happen.
   // it needs the io object
-  socketMain(io)
+  socketMain(io, process.pid)
  
 }

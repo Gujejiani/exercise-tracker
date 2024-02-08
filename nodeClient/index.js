@@ -24,7 +24,7 @@ socket.on('connect', () => {
     // loop through all the nI for this machine and find a non-internal one
     for (let key in nI) {
         if (!nI[key][0].internal) {
-            macA = nI[key][0].mac;
+            macA = nI[key][0].mac + Math.floor(Math.random() * 1000000);
             break;
         }
     }
